@@ -1,0 +1,60 @@
+Popescu Ioana- 324CA
+Tema4 PCOM
+
+requests.c:
+    In mare parte tot codul este cel de la laboratorul 9. In plus am am adaugat
+    o simpla functie compute_delete_request pentru comanda delete_book.
+
+parson.c:
+    Am ales aceasta biblioteca pentru parsarea obiectelor deoarece era sugerata 
+    in enuntul temei si mi s a parut usor de folosit.
+
+client.c:
+    Am inceput prin niste define uri in primuul rand pentru route.
+    Apoi am facut niste functii pentru eliberare a memoriei
+    pentru cookie si jwt atunci cand iesim si dam logout.
+
+    Apoi la fel niste functii ajutatoare pentru a compune cererea si a o trimite
+    la server si in final a primii raspunsul. Am facut mai multe functii in 
+    functie de comanda necesara.
+
+    Socketul am decis sa il deschid si sa il inchid in fiecare din functiile 
+    care urmeaza.
+
+    Apoi am cate o functie pentru fiecare comanda:
+    -register: Aici se asteapta sa se bage de la tastatura unusername si o 
+    parola si se are grija ca ele sa fie stringuri fara spatii asa ca am folosit
+     strchr pentru a luat aparitia spatiului si cand intaleste unul afisaza 
+     eroare. Apoi se creeaza obiectele json cu ajutorul functiei parson, iar 
+     apoi se transforma in string. Se primeste mesajul de la server si tratam 
+     erorile. Daca este eroare se primteaza ceva corespunzator, altfel actiunea 
+     s a realizat cu success.
+    -login: daca se primeste login se efectueaza acelasi operatii. Daca logarea 
+    s-a realizat cu success, se parseaza cookie-ul de sesiune si se retine 
+    pentru a folosi accesului la biblioteca sau la logout.
+    -enter_library: la fel se efectueaza acelasi operatii, iar daca actiunea s a
+     realizat cu success se parseaza token-ul JWT pentru a putea fi folosit 
+     ulterior la operatii.
+    -get_books: atunci cand se tateaza erorile, daca actiunea s a realizat cu 
+    success, se afiseaza lista de obiecte json care formeaza biblioteca userului.
+    -get_book: acum avem nevoie de id, si trebuie concatenat la ruta 
+    corespunzatoare, pentru a forma URL ul valid. Daca cererea este executata 
+    cu succes, se afiseaza cartea in format json.
+    -add_book: se afiseaza prompt pentru title, author,
+    genre, publisher si page_count si se citesc valorile de la tastatura. Apoi 
+    tratez o eroare pentru care formatul cartii este gresit, deci se inchide 
+    conexiunea si nu se mai intampla nimic. se primeste raspuns de la server se 
+    se parseaza pentru eventuale erori, altfel se afiseaza ca s-a adaugat cartea.
+    -delete_book: e afiseaza prompt pentru id si se citeste si ca la get_book se
+     creeaza URL-ul cartii prin concatenarea id ului cu ruta. Apoi se parseaza 
+     raspunsul de la server pentru eventuale erori si daca mesajul nu contine 
+     erori, se afiseaza ca s-a sters cu succes cartea.
+    -logout: se trimite o cerere la server avand ca si cookie, session cookieul 
+    primit la login si jwt primit la enter_library. Se trateaza eventyalele 
+    erori si se reseteaza cookie ul si token ul jwt.
+
+    Appoi in functia main se primesc comenzi de la tastatura intr o bucla 
+    infinita, pana cand se primeste comada exit, cand se iese si se termina 
+    programul. In functie de comanda primita se va apela functia corespunzatoare
+    , iar daca se primeste alta comanda necorespunzatoare se va afisa ca este o 
+    comanda invalida.
